@@ -43,7 +43,7 @@ class MEFARG(nn.Module):
                 self.backbone = resnet101()
             else:
                 self.backbone = resnet50(pretrained=True)
-            # 后续改变初始特征提取的网络时，需要改变这里的in_channels
+        
             self.in_channels = self.backbone.fc.weight.shape[1]  # backbone.fc.weight.shape = [1000,512]
 
             self.backbone.fc = None
@@ -69,6 +69,7 @@ class MEFARG(nn.Module):
 
         cl = self.head(x)
         return cl
+
 
 
 
