@@ -10,7 +10,6 @@ from gcn import GCN
 class Model(nn.Module):
     def __init__(self, num_classes=12, backbone='resnet50'):
         super(Model, self).__init__()
-        # 如果选择resnet50 作为 backbone，则为下面的
         self.mefarg = MEFARG(num_classes=num_classes, backbone=backbone)
 
         if backbone == 'resnet50':
@@ -49,7 +48,6 @@ class Model(nn.Module):
             nn.Linear(in_features=4096, out_features=num_classes)
         )
 
-        # 初始化 classifier1 和 classifier 中的线性层
         for m in self.classifier1.modules():
             if isinstance(m, nn.Linear):
                 torch.nn.init.xavier_uniform_(m.weight)
@@ -79,6 +77,7 @@ class Model(nn.Module):
         m = nn.Sigmoid()
         result = m(result)
         return result
+
 
 
 
