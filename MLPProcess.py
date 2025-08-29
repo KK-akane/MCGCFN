@@ -4,8 +4,7 @@ import torch.nn.functional as F
 from utils import get_activation_function
 
 
-# Perform MLP on last dimension
-# activation: elu elu gelu hardshrink hardtanh leaky_relu prelu relu rrelu tanh
+
 class MLP(nn.Module):
     def __init__(self, activate, d_in, d_hidden, d_out, bias):
         super(MLP, self).__init__()
@@ -13,7 +12,7 @@ class MLP(nn.Module):
         self.fc2 = nn.Linear(d_hidden, d_out, bias=bias)
         self.activation = get_activation_function(activate)
     
-    # x: [bs, l, k, d] k=modalityKinds mask: [bs, l]
+
     def forward(self, x, mask=None):
         x = self.fc1(x)
         x = self.activation(x)
@@ -21,7 +20,7 @@ class MLP(nn.Module):
         return x
 
 
-# d_ins=[l, k, d]'s inputlength same for d_hiddens,dropouts
+
 class MLPsBlock(nn.Module):    
     def __init__(self, activate, d_ins, d_hiddens, d_outs, dropouts, bias, ln_first=False, res_project=False):
         super(MLPsBlock, self).__init__()
@@ -51,7 +50,7 @@ class MLPsBlock(nn.Module):
             self.res_projection_k = nn.Linear(d_ins[1], d_outs[1], bias=False)
             self.res_projection_d = nn.Linear(d_ins[2], d_outs[2], bias=False)
     
-    # x: [bs, l, k, d] k=modalityKinds mask: [bs, l]
+
     def forward(self, x, mask=None):
         if mask is not None:
             print("Warning from MLPsBlock: If using mask, d_in should be equal to d_out.")
@@ -122,7 +121,6 @@ class MLPsBlock(nn.Module):
         return x
 
 
-# d_in=[l,k,d], hiddens, outs = [[l,k,d], [l,k,d], ..., [l,k,d]] for n layers
 class MLPEncoder(nn.Module):
     def __init__(self, activate, d_in, d_hiddens, d_outs, dropouts, bias, ln_first=False, res_project=[False, False, True]):
         super(MLPEncoder, self).__init__()
@@ -137,35 +135,6 @@ class MLPEncoder(nn.Module):
         return x
 
 
-# if __name__ == '__main__':
-#     from Utils import to_gpu, get_mask_from_sequence
-#
-#     print('='*40, 'Testing Mask', '='*40)
-#     x = torch.randn(2, 3, 4)
-#     mask = get_mask_from_sequence(x, -1) # valid=False/0
-#     print(mask)
-#     print(mask.shape)
-#
-#     x = to_gpu(torch.randn(2, 3, 5, 6))
-#     mask = to_gpu(torch.Tensor([
-#         [False, False, False],
-#         [False, False, True],
-#     ]))
-#
-#     # print('='*40, 'Testing MLP', '='*40)
-#     # mlp = to_gpu(MLP('gelu', 6, 16, 26, bias=False))
-#     # y = mlp(x, mask)
-#     # print(y.shape)
-#
-#     # print('='*40, 'Testing MLPsBlock', '='*40)
-#     # mlpsBlock = to_gpu(MLPsBlock(activate='gelu', d_ins=[3, 5, 6], d_hiddens=[13, 15, 16], d_outs=[23, 25, 26], bias=False, res_project=True, dropouts=[0.1, 0.2, 0.3], ln_first=False))
-#     # y = mlpsBlock(x, mask=None)
-#     # print(y.shape)
-#
-#     print('='*40, 'Testing MLPEncoder', '='*40)
-#     x = to_gpu(torch.randn(2, 100, 3, 128))
-#     encoder = to_gpu(MLPEncoder(activate='gelu', d_in=[100, 3, 128], d_hiddens=[[100, 3, 128], [100, 3, 128], [50, 2, 64], [50, 2, 64]], d_outs=[[100, 3, 128], [50, 2, 64], [50, 2, 64], [10, 1, 32]], dropouts=[0.3,0.5,0.6], bias=False, ln_first=True, res_project=[True, True, True, True]))
-#     y = encoder(x, mask=None)
-#     print(y.shape)
+
 
 
